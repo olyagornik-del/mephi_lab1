@@ -1,0 +1,6 @@
+#ifndef LAB_TESTTYPEINFODOUBLE_H
+#define LAB_TESTTYPEINFODOUBLE_H
+
+void testTypeInfoDoubleAll ();
+
+#endif //LAB_TESTTYPEINFODOUBLE_H
