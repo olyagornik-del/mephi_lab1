@@ -71,7 +71,7 @@ void FillVector (Vector *v, void **values, size_t values_size) {
     }
 }
 
-void addVector (const Vector *v1, const Vector *v2, Vector *v_res) {
+void AddVector (const Vector *v1, const Vector *v2, Vector *v_res) {
     if (v1 == NULL || v2 == NULL || v_res == NULL) {
         fprintf(stderr, "Сложение: зачем дали NULL?\n");
         return;
@@ -127,7 +127,7 @@ void NormVector (const Vector *v, double *result) {
 
     for (size_t i = 0; i < v->size; i++) {
         v->type_info->square(getElement(v, i), sq);
-        sum += v->type_info->ToDouble(sq);
+        sum += v->type_info->toDouble(sq);
     }
 
     free(sq);

@@ -23,24 +23,24 @@ static double getRe(const void *obj) { return ((const ComplexTest*)obj)->Re; }
 static double getIm(const void *obj) { return ((const ComplexTest*)obj)->Im; }
 
 
-static void test_GetComplexTypeInfo_notNull () {
+static void testGetComplexTypeInfo_notNull () {
     assert(ti != NULL);
     printf("  [OK] GetComplexTypeInfo возвращает не NULL\n");
 }
 
-static void test_singleton () {
+static void testSingleton () {
     const TypeInfo *ti1 = GetComplexTypeInfo();
     const TypeInfo *ti2 = GetComplexTypeInfo();
     assert(ti1 == ti2);
     printf("  [OK] GetComplexTypeInfo: один и тот же указатель при двух вызовах\n");
 }
 
-static void test_elementSize () {
+static void testElementSize () {
     assert(ti->elementSize == sizeof(ComplexTest));
     printf("  [OK] elementSize == sizeof(ComplexTest)\n");
 }
 
-static void test_zero() {
+static void testZero() {
     const void *z = ti->zero();
     assert(z != NULL);
     assert(fabs(getRe(z) - 0.0) < EPS);
@@ -48,7 +48,7 @@ static void test_zero() {
     printf("  [OK] zero() == (0.0 + 0.0i)\n");
 }
 
-static void test_alloc () {
+static void testAlloc () {
     void *obj = ti->alloc();
     assert(obj != NULL);
     printf("  [OK] alloc() не вернул NULL\n");
@@ -56,7 +56,7 @@ static void test_alloc () {
     free(obj);
 }
 
-static void test_assign () {
+static void testAssign () {
     void *src = makeComplex(3.14, 3.7);
     void *dst = ti->alloc();
 
@@ -70,7 +70,7 @@ static void test_assign () {
     free(dst);
 }
 
-static void test_add () {
+static void testAdd () {
     void *pos1 = makeComplex(2.0, 4);
     void *pos2 = makeComplex(3.0, 5);
     void *neg1 = makeComplex(-2, -4);
@@ -94,7 +94,7 @@ static void test_add () {
     free(result);
 }
 
-static void test_multiply () {
+static void testMultiply () {
     void *a = makeComplex(1, 2);
     void *b = makeComplex(3, 4);
     void *c = makeComplex(0.0, 2.0);
@@ -123,7 +123,7 @@ static void test_multiply () {
     free(result);
 }
 
-static void test_square () {
+static void testSquare () {
     void *a = makeComplex(3.0, 4.0);
     void *result = ti->alloc();
 
@@ -147,15 +147,15 @@ static void test_square () {
     free(result);
 }
 
-static void test_ToDouble() {
+static void testToDouble() {
     void *a = makeComplex(7.5, 99.0);
     void *b = makeComplex(0.0, 5.0);
 
-    assert(fabs(ti->ToDouble(a) - 7.5) < EPS);
+    assert(fabs(ti->toDouble(a) - 7.5) < EPS);
     printf("  [OK] ToDouble: возвращает Re == 7.5\n");
 
     // Re == 0
-    assert(fabs(ti->ToDouble(b) - 0.0) < EPS);
+    assert(fabs(ti->toDouble(b) - 0.0) < EPS);
     printf("  [OK] ToDouble: Re == 0 при чисто мнимом числе\n");
 
     free(a);
@@ -169,15 +169,15 @@ void testTypeInfoComplexAll() {
     ti = GetComplexTypeInfo();
 
     printf("=== Тесты TypeInfoComplex ===\n");
-    test_GetComplexTypeInfo_notNull();
-    test_singleton();
-    test_elementSize();
-    test_zero();
-    test_alloc();
-    test_assign();
-    test_add();
-    test_multiply();
-    test_square();
-    test_ToDouble();
+    testGetComplexTypeInfo_notNull();
+    testSingleton();
+    testElementSize();
+    testZero();
+    testAlloc();
+    testAssign();
+    testAdd();
+    testMultiply();
+    testSquare();
+    testToDouble();
     printf("=== Все тесты пройдены! ===\n");
 }

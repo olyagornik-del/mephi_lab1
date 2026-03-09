@@ -62,7 +62,7 @@ const TypeInfo* GetDoubleTypeInfo () {
         info->multiply = multiplyDouble;
         info->assign = assignDouble;
         info->square = sqDouble;
-        info->ToDouble = toDoubleD;
+        info->toDouble = toDoubleD;
         info->alloc = allocDouble;
         info->zero = zeroDouble;
         info->print = printDouble;

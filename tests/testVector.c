@@ -152,7 +152,7 @@ void testAddVector () {
     double valsB[] = {4.0, 5.0, 6.0};
     TypeInfo mock_ti2 = mock_ti;
 
-    Vector *A = makeVector(3, valsA, &mock_ti);
+    Vector *A = makeVector(3, valsA, &mock_ti); //c маленькой
     Vector *B = makeVector(3, valsB, &mock_ti);
     Vector *R = CreateVector(3, &mock_ti);
     Vector *smalV = CreateVector(1, &mock_ti);
@@ -162,18 +162,19 @@ void testAddVector () {
 
 
     //передаём нул
-    addVector(NULL, B, R);
-    addVector(A, NULL, R);
-    addVector(A, B, NULL);
+    AddVector(NULL, B, R);
+    AddVector(A, NULL, R);
+    AddVector(A, B, NULL);
 
     //передаём вектор с другим типом данных
-    addVector(diffrentTIVector, B, R);
+    AddVector(diffrentTIVector, B, R);
+    //assert(R)
 
     //передаём вектор другой размерноси
-    addVector(smalV, B, R);
+    AddVector(smalV, B, R);
 
     // Нормальное сложение: [1,2,3] + [4,5,6] = [5,7,9]
-    addVector(A, B, R);
+    AddVector(A, B, R);
 
     MockNum* r0 = (MockNum*)((char*)R->data + 0 * mock_ti.elementSize);
     MockNum* r1 = (MockNum*)((char*)R->data + 1 * mock_ti.elementSize);

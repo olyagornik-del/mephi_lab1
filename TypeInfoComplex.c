@@ -82,7 +82,7 @@ const TypeInfo* GetComplexTypeInfo () {
         info->multiply = multiplyComplex;
         info->assign = assignComplex;
         info->square = sqComplex;
-        info->ToDouble = toDouble_Re_C;
+        info->toDouble = toDouble_Re_C;
         info->alloc = allocComplex;
         info->zero = zeroComplex;
         info->print = printComplex;

@@ -14,7 +14,7 @@ typedef struct TypeInfo {
     BinaryOperation multiply;
     UnaryOperation assign;
     UnaryOperation square;
-    ToDouble ToDouble;
+    ToDouble toDouble;
     Allocator alloc;
     ConstantGetter zero;
     Printer print;

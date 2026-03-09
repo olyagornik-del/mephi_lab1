@@ -253,7 +253,7 @@ int main(void) {
 
                 if (result == NULL) break;
 
-                addVector(A, B, result);
+                AddVector(A, B, result);
 
                 printf("  A + B = ");
                 PrintVector(result);
