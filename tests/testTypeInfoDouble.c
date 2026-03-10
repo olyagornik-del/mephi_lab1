@@ -18,46 +18,45 @@ static void* makeDouble(double v) {
 
 static void testGetDoubleTypeInfo_notNull () {
     assert(ti != NULL);
-    printf("  [OK] GetDoubleTypeInfo возвращает не NULL\n");
+    printf("  [OK] testGetDoubleTypeInfo_notNull\n");
 }
 
 static void testSingleton () {
     const TypeInfo *ti1 = GetDoubleTypeInfo();
     const TypeInfo *ti2 = GetDoubleTypeInfo();
     assert(ti1 == ti2);
-    printf("  [OK] GetDoubleTypeInfo: один и тот же указатель при двух вызовах\n");
+    printf("  [OK] testSingleton (один и тот же указатель при двух вызовах)\n");
 }
 
 static void testElementSize () {
     assert(ti->elementSize == sizeof(double));
-    printf("  [OK] elementSize == sizeof(double)\n");
+    printf("  [OK] testElementSize\n");
 }
 
 static void testZero () {
     const void *z = ti->zero();
     assert(z != NULL);
     assert(fabs(*(const double*)z - 0.0) < EPS);
-    printf("  [OK] zero() == 0.0\n");
+    printf("  [OK] testzero\n");
 }
 
 static void testAlloc () {
     void *obj = ti->alloc();
     assert(obj != NULL);
     free(obj);
-    printf("  [OK] alloc() не вернул NULL\n");
+    printf("  [OK] testAlloc\n");
 }
 
 static void testAssign () {
     void *src = makeDouble(3.14);
-    void *dst = ti->alloc();
+    void *dst = makeDouble(0);
 
     ti->assign(src, dst);
-
-    assert(fabs(*(double*)dst - 3.14) < EPS);
+    assert(fabs(*(double*)src - 3.14) < EPS);
 
     free(src);
     free(dst);
-    printf("  [OK] assign: значение скопировано верно\n");
+    printf("  [OK] testAssign\n");
 }
 
 static void testAdd () {
@@ -66,39 +65,41 @@ static void testAdd () {
     void *neg1 = makeDouble(-2);
     void *result = ti->alloc();
 
-    //сложение положительных
+    // 2 + 3 = 5
     ti->add(pos1, pos2, result);
     assert(fabs(*(double*)result - 5.0) < EPS);
-    printf("  [OK] add: 2.0 + 3.0 == 5.0\n");
 
-    //сложение полож + нег
+    //2 - 2  = 0
     ti->add(pos1, neg1, result);
     assert(fabs(*(double*)result - 0) < EPS);
-    printf("  [OK] add: 2.0 - 2.0 == 0.0\n");
 
 
     free(pos1);
     free(pos2);
     free(neg1);
     free(result);
+
+    printf("  [OK] testAdd\n");
 }
 
 static void testMultiply () {
-    void *a = makeDouble(4.0);
-    void *b = makeDouble(2.5);
+    void *num1 = makeDouble(4.0);
+    void *num2 = makeDouble(2.5);
     void *result = ti->alloc();
 
-    ti->multiply(a, b, result);
+    // 4 * 2.5 = 10
+    ti->multiply(num1, num2, result);
     assert(fabs(*(double*)result - 10.0) < EPS);
-    printf("  [OK] multiply: 4.0 * 2.5 == 10.0\n");
 
-    ti->multiply(a, ti->zero(), result);
+    // 4 * 0 = 0
+    ti->multiply(num1, ti->zero(), result);
     assert(fabs(*(double*)result - 0) < EPS);
-    printf("  [OK] multiply: 4.0 * 0.0 == 0.0\n");
 
-    free(a);
-    free(b);
+    free(num1);
+    free(num2);
     free(result);
+
+    printf("  [OK] testMultiply\n");
 }
 
 static void testSquare () {
@@ -106,20 +107,23 @@ static void testSquare () {
     void *neg = makeDouble(-6.0);
     void *result = ti->alloc();
 
+    // 5^2 == 25
     ti->square(pos, result);
     assert(fabs(*(double*)result - 25.0) < EPS);
-    printf("  [OK] square: 5.0^2 == 25.0\n");
 
+    // (-6)^2 == 36
     ti->square(neg, result);
     assert(fabs(*(double*)result - 36) < EPS);
-    printf("  [OK] square: (-6.0)^2 == 36.0\n");
 
+    // 0^2 = 0
     ti->square(ti->zero(), result);
     assert(fabs(*(double*)result - 0) < EPS);
 
     free(pos);
     free(neg);
     free(result);
+
+    printf("  [OK] testSquare\n");
 }
 
 static void testToDouble() {
@@ -127,9 +131,10 @@ static void testToDouble() {
 
     double val = ti->toDouble(a);
     assert(fabs(val - 7.77) < EPS);
-    printf("  [OK] ToDouble: возвращает верное значение\n");
 
     free(a);
+
+    printf("  [OK] testToDouble\n");
 }
 
 

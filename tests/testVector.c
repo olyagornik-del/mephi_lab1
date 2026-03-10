@@ -115,7 +115,66 @@ void testDeleteVector () {
     printf("  [OK] testDeleteVector\n");
 }
 
+void testGetElementVector() {
+    Vector *v = CreateVector(5, &mock_ti);
+
+    MockNum *element = GetElementVector(NULL, 0);
+    assert(element == NULL);
+
+    element = GetElementVector(v, -1);
+    assert(element == NULL);
+
+    element = GetElementVector(v, 2);
+    assert(element->value == 0);
+
+    DeleteVector(v);
+
+    printf("  [OK] testGetElementVector\n");
+}
+
+void testSetElementVector() {
+    double valsv1[] = {1.0, 2.0, 3.0};
+    MockNum newVal = {3.5};
+
+    Vector *v = makeVector(3, valsv1, &mock_ti);
+    void *ptr = &newVal;
+    MockNum *result = (MockNum*)GetElementVector(v, 2);
+
+    //передаём пустой вектор, проверяем не изменился ли указатель на новый элемент
+    SetElementVector(NULL, 2, ptr);
+    assert(ptr == &newVal);
+
+    //передаём пустой указ на новый, значение в векторе не должно поменяться
+    SetElementVector(v, 2, NULL);
+    result = (MockNum*)GetElementVector(v, 2);
+    assert(fabs(result->value - 3) < 1e-9);
+
+    //передаём нормально
+    SetElementVector(v, 2, ptr);
+    result = (MockNum*)GetElementVector(v, 2);
+    assert(fabs(result->value - 3.5) < 1e-9);
+
+    //проверим что остальные эл-ты не изменились
+    MockNum *elem1 = (MockNum*)GetElementVector(v, 0);
+    assert(fabs(elem1->value - 1) < 1e-9);
+    MockNum *elem2 = (MockNum*)GetElementVector(v, 1);
+    assert(fabs(elem2->value - 1) < 1e-9);
+
+    DeleteVector(v);
+
+    printf("  [OK] testSetElementVector\n");
+}
+
+
 void testFillVector () {
+    void* wrongPtrs[2];
+    MockNum tmp0 = {1.0}, tmp1 = {2.0};
+    wrongPtrs[0] = &tmp0; wrongPtrs[1] = &tmp1;
+
+    void* ptrs[3];
+    MockNum m0={10.0}, m1={20.0}, m2={30.0};
+    ptrs[0]=&m0; ptrs[1]=&m1; ptrs[2]=&m2;
+
     //NULL передаём дважды
     FillVector(NULL, NULL, 0);
 
@@ -126,16 +185,10 @@ void testFillVector () {
     FillVector(vector, NULL, 3);
 
     //не совпал размер
-    void* wrongPtrs[2];
-    MockNum tmp0 = {1.0}, tmp1 = {2.0};
-    wrongPtrs[0] = &tmp0; wrongPtrs[1] = &tmp1;
     FillVector(vector, (void**)wrongPtrs, 2);
 
-    void* ptrs[3];
-    MockNum m0={10.0}, m1={20.0}, m2={30.0};
-    ptrs[0]=&m0; ptrs[1]=&m1; ptrs[2]=&m2;
-    FillVector(vector, (void**)ptrs, 3);
     // Проверяем что данные записались
+    FillVector(vector, (void**)ptrs, 3);
     MockNum *e0 = (MockNum*)((char*)vector->data + 0 * mock_ti.elementSize);
     MockNum *e1 = (MockNum*)((char*)vector->data + 1 * mock_ti.elementSize);
     MockNum *e2 = (MockNum*)((char*)vector->data + 2 * mock_ti.elementSize);
@@ -148,44 +201,44 @@ void testFillVector () {
 }
 
 void testAddVector () {
-    double valsA[] = {1.0, 2.0, 3.0};
-    double valsB[] = {4.0, 5.0, 6.0};
+    double valsv1[] = {1.0, 2.0, 3.0};
+    double valsv2[] = {4.0, 5.0, 6.0};
     TypeInfo mock_ti2 = mock_ti;
 
-    Vector *A = makeVector(3, valsA, &mock_ti); //c маленькой
-    Vector *B = makeVector(3, valsB, &mock_ti);
-    Vector *R = CreateVector(3, &mock_ti);
+    Vector *v1 = makeVector(3, valsv1, &mock_ti); //c маленькой
+    Vector *v2 = makeVector(3, valsv2, &mock_ti);
+    Vector *v0 = CreateVector(3, &mock_ti);
     Vector *smalV = CreateVector(1, &mock_ti);
     Vector *diffrentTIVector = CreateVector(3, &mock_ti2);
 
-    assert((A != NULL) && (B!= NULL) && (R != NULL) && (smalV != NULL) && (diffrentTIVector != NULL));
+    assert((v1 != NULL) && (v2!= NULL) && (v0 != NULL) && (smalV != NULL) && (diffrentTIVector != NULL));
 
 
     //передаём нул
-    AddVector(NULL, B, R);
-    AddVector(A, NULL, R);
-    AddVector(A, B, NULL);
+    AddVector(NULL, v2, v0);
+    AddVector(v1, NULL, v0);
+    AddVector(v1, v2, NULL);
 
     //передаём вектор с другим типом данных
-    AddVector(diffrentTIVector, B, R);
+    AddVector(diffrentTIVector, v2, v0);
     //assert(R)
 
     //передаём вектор другой размерноси
-    AddVector(smalV, B, R);
+    AddVector(smalV, v2, v0);
 
     // Нормальное сложение: [1,2,3] + [4,5,6] = [5,7,9]
-    AddVector(A, B, R);
+    AddVector(v1, v2, v0);
 
-    MockNum* r0 = (MockNum*)((char*)R->data + 0 * mock_ti.elementSize);
-    MockNum* r1 = (MockNum*)((char*)R->data + 1 * mock_ti.elementSize);
-    MockNum* r2 = (MockNum*)((char*)R->data + 2 * mock_ti.elementSize);
+    MockNum* r0 = (MockNum*)((char*)v0->data + 0 * mock_ti.elementSize);
+    MockNum* r1 = (MockNum*)((char*)v0->data + 1 * mock_ti.elementSize);
+    MockNum* r2 = (MockNum*)((char*)v0->data + 2 * mock_ti.elementSize);
     assert(r0->value == 5.0);
     assert(r1->value == 7.0);
     assert(r2->value == 9.0);
 
-    DeleteVector(A);
-    DeleteVector(B);
-    DeleteVector(R);
+    DeleteVector(v1);
+    DeleteVector(v2);
+    DeleteVector(v0);
     DeleteVector(smalV);
     DeleteVector(diffrentTIVector);
 
@@ -197,73 +250,73 @@ void testDotVector () {
     double valsB[] = {4.0, 5.0, 6.0};
     TypeInfo mock_ti2 = mock_ti;
 
-    Vector *A = makeVector(3, valsA, &mock_ti);
-    Vector *B = makeVector(3, valsB, &mock_ti);
-    Vector *Z = CreateVector(3, &mock_ti);
+    Vector *v1 = makeVector(3, valsA, &mock_ti);
+    Vector *v2 = makeVector(3, valsB, &mock_ti);
+    Vector *v0 = CreateVector(3, &mock_ti);
     MockNum R = {0.0};
     Vector *smalV = CreateVector(1, &mock_ti);
     Vector *diffrentTIVector = CreateVector(3, &mock_ti2);
 
-    assert((A != NULL) && (B!= NULL) && (smalV != NULL) && (diffrentTIVector != NULL));
+    assert((v1 != NULL) && (v2!= NULL) && (smalV != NULL) && (diffrentTIVector != NULL));
 
     // один из указателей нул
-    DotVector(NULL, B, &R);
-    DotVector(A, NULL, &R);
-    DotVector(A, B, NULL);
+    DotVector(NULL, v2, &R);
+    DotVector(v1, NULL, &R);
+    DotVector(v1, v2, NULL);
 
     //разные типы
-    DotVector(A, smalV, &R);
+    DotVector(v1, smalV, &R);
 
     // разные размеры
-    DotVector(A, diffrentTIVector, &R);
+    DotVector(v1, diffrentTIVector, &R);
 
     // нормальный случай
     // [1,2,3] · [4,5,6] = 1*4 + 2*5 + 3*6 = 4+10+18 = 32
-    DotVector(A, B, &R);
+    DotVector(v1, v2, &R);
     assert(R.value == 32);
 
     //нулевой веткор
-    DotVector(Z, A, &R);
+    DotVector(v0, v1, &R);
     assert(R.value == 0);
 
-    DeleteVector(A);
-    DeleteVector(B);
+    DeleteVector(v1);
+    DeleteVector(v2);
     DeleteVector(smalV);
     DeleteVector(diffrentTIVector);
-    DeleteVector(Z);
+    DeleteVector(v0);
 
     printf("  [OK] testDotVector\n");
 }
 
 void testNormVector () {
-    double valsA[] = {3.0, 4.0};
+    double valsv1[] = {3.0, 4.0};
     double valsBasis[] = {1, 0, 0};
 
-    Vector *A = makeVector(2, valsA, &mock_ti);
-    Vector *Z = CreateVector(3, &mock_ti);
-    Vector *B = makeVector(3, valsBasis, &mock_ti);
+    Vector *v1 = makeVector(2, valsv1, &mock_ti);
+    Vector *v0 = CreateVector(3, &mock_ti);
+    Vector *vb = makeVector(3, valsBasis, &mock_ti);
     double res = {56.0};
 
     //Нул в аргументах
     NormVector(NULL, &res);
     assert(res == 56);
-    NormVector(A, NULL);
+    NormVector(v1, NULL);
 
     //нулевой вектор
-    NormVector(Z, &res);
+    NormVector(v0, &res);
     assert(fabs(res - 0) < 1e-9);
 
     //вектор с длинной 1
-    NormVector(B, &res);
+    NormVector(vb, &res);
     assert(fabs(res - 1) < 1e-9);
 
     //адекватный вектор
-    NormVector(A, &res);
+    NormVector(v1, &res);
     assert(fabs(res - 5) < 1e-9);
 
-    DeleteVector(A);
-    DeleteVector(B);
-    DeleteVector(Z);
+    DeleteVector(v1);
+    DeleteVector(vb);
+    DeleteVector(v0);
 
     printf("  [OK] testLengthVector\n");
 
@@ -274,6 +327,7 @@ void testVectorAll () {
     printf("=== Тесты Vector ===\n");
     testCreateVector();
     testDeleteVector();
+    testGetElementVector();
     testFillVector();
     testAddVector();
     testDotVector();

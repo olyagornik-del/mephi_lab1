@@ -12,7 +12,7 @@ typedef struct Vector{
 Vector* CreateVector (size_t size, const TypeInfo *type_info);
 void DeleteVector (Vector *v);
 void FillVector (Vector *v, void **values, size_t values_size);
-void GetElementVector (Vector *v, size_t i);
+void* GetElementVector (const Vector *v, size_t i);
 void SetElementVector(Vector *v, size_t i, void *new);
 void AddVector (const Vector *v1, const Vector *v2, Vector *v_res); //нужны get, set
 void DotVector (const Vector *v1, const Vector *v2, void *result);
