@@ -29,12 +29,12 @@ static int scanDouble(double *out) {
 //размерность вектора
 size_t inputSize() {
     int n;
-    printf("  Введите размерность вектора: ");
+    printf("  Введите размерность вектора (или номер элемента): ");
     while (!scanInt(&n)) {
-        printf("  Введите размерность вектора: ");
+        printf("  Введите размерность вектора (или номер элемента): ");
     }
     if (n <= 0) {
-        printf("  Хм, отрицательный вектор? Креативно, но нет. Ставлю 1.\n");
+        printf("  Хм, ну не подходит. Ставлю 1 >:^) \n");
         return 1;
     }
     return (size_t)n;
@@ -115,16 +115,18 @@ void printTypeMenu() {
 }
 
 void printMenu() {
-    printf("\n  ┌──────────────────────────────────┐\n");
-    printf("  │  1. Создать вектор A             │\n");
-    printf("  │  2. Создать вектор B             │\n");
-    printf("  │  3. Показать векторы             │\n");
-    printf("  │  4. Сложить A + B                │\n");
-    printf("  │  5. Скалярное произведение A · B │\n");
-    printf("  │  6. Длина вектора A              │\n");
-    printf("  │  7. Длина вектора B              │\n");
-    printf("  │  0. Выход                        │\n");
-    printf("  └──────────────────────────────────┘\n");
+    printf("\n  ┌──────────────────────-────────────┐\n");
+    printf("  │  1. Создать вектор A              │\n");
+    printf("  │  2. Создать вектор B              │\n");
+    printf("  │  3. Изменить элемент в А          │\n");
+    printf("  │  4. Изменить элемент в B          │\n");
+    printf("  │  5. Показать векторы              │\n");
+    printf("  │  6. Сложить A + B                 │\n");
+    printf("  │  7. Скалярное произведение A · B  │\n");
+    printf("  │  8. Длина вектора A               │\n");
+    printf("  │  9. Длина вектора B               │\n");
+    printf("  │  0. Выход                         │\n");
+    printf("  └───────────────────────────────-───┘\n");
     printf("  Выберите: ");
 }
 
@@ -211,7 +213,86 @@ int main(void) {
                 break;
             } // case 2
 
-            case 3: { //принт векторов А и В
+            case 3: {
+                if (A==NULL) {
+                    printf("  Сначала создайте вектор!\n");
+                    break;
+                }
+                printf("  Какой элемент вы хотите изменить? (индексы начинаются с 1)\n");
+                size_t n = inputSize() - 1;
+
+                while (A->size < n) {
+                    printf("  Нужен номер соответствующий размерности вектора\n");
+                    n = inputSize();
+                }
+
+                if (A->type_info->elementSize == sizeof(double)) {
+                    double val;
+                    printf("  Элемент [%zu]: ", n+1);
+                    while (!scanDouble(&val)) {
+                        printf("  Элемент [%zu]: ", n+1);
+                    }
+                    SetElementVector(A, n, &val);
+                }
+
+                else {
+                    double re, im;
+
+                    printf("  Элемент [%zu] Re: ", n+1);
+                    while (!scanDouble(&re)) {
+                        printf("  Элемент [%zu] Re: ", n+1);
+                    }
+
+                    printf("  Элемент [%zu] Im: ", n+1);
+                    while (!scanDouble(&im)) {
+                        printf("  Элемент [%zu] Im: ", n+1);
+                    }
+                     SetElementVector(A, n, CreateComplex(re, im));
+                }
+
+            break;
+            }//case 3 изменение 1 элемента вектора A
+
+            case 4: {
+                if (B==NULL) {
+                    printf("  Сначала создайте вектор!\n");
+                    break;
+                }
+                printf("  Какой элемент вы хотите изменить? (индексы начинаются с 1)\n");
+                size_t n = inputSize() - 1;
+
+                while (B->size < n) {
+                    printf("  Нужен номер соответствующий размерности вектора\n");
+                    n = inputSize();
+                }
+
+                if (B->type_info->elementSize == sizeof(double)) {
+                    double val;
+                    printf("  Элемент [%zu]: ", n+1);
+                    while (!scanDouble(&val)) {
+                        printf("  Элемент [%zu]: ", n+1);
+                    }
+                    SetElementVector(B, n, &val);
+                }
+
+                else {
+                    double re, im;
+
+                    printf("  Элемент [%zu] Re: ", n+1);
+                    while (!scanDouble(&re)) {
+                        printf("  Элемент [%zu] Re: ", n+1);
+                    }
+
+                    printf("  Элемент [%zu] Im: ", n+1);
+                    while (!scanDouble(&im)) {
+                        printf("  Элемент [%zu] Im: ", n+1);
+                    }
+                    SetElementVector(A, n, CreateComplex(re, im));
+                }
+
+            }
+
+            case 5: { //принт векторов А и В
                 printf("\n");
 
                 // Проверяем что вектор существует перед печатью
@@ -233,9 +314,9 @@ int main(void) {
                     printf("  B = (не создан)\n");
                 }
                 break;
-            }//case 3
+            }//case 5
 
-            case 4: { //сложение вектора
+            case 6: { //сложение вектора
                 // Проверяем что оба вектора существуют
                 if (A == NULL || B == NULL) {
                     printf("  Сначала создайте оба вектора!\n");
@@ -259,9 +340,9 @@ int main(void) {
                 PrintVector(result);
                 printf("\n");
                 break;
-            } // case 4
+            } // case 6
 
-            case 5: { // скалярное произведение
+            case 7: { // скалярное произведение
                 if (A == NULL || B == NULL) {
                     printf("  Сначала создайте оба вектора!\n");
                     break;
@@ -283,9 +364,9 @@ int main(void) {
 
                 free(dotResult);
                 break;
-            } // case 5
+            } // case 7
 
-            case 6: { // длина вектора A
+            case 8: { // длина вектора A
                 if (A == NULL) {
                     printf("  Сначала создайте вектор A!\n");
                     break;
@@ -294,9 +375,9 @@ int main(void) {
                 NormVector(A, &lenA);
                 printf("  |A| = %.2f\n", lenA);
                 break;
-            }//case 6
+            }//case 8
 
-            case 7: { // длина вектора B
+            case 9: { // длина вектора B
                 if (B == NULL) {
                     printf("  Сначала создайте вектор B!\n");
                     break;
@@ -305,7 +386,7 @@ int main(void) {
                 NormVector(B, &lenB);
                 printf("  |B| = %.2f\n", lenB);
                 break;
-            }//case 7
+            }//case 9
 
             case 0: { //выход
                 printf("\n  Освобождаем память и уходим...\n");
@@ -326,6 +407,3 @@ int main(void) {
         } //switch
     } // while
 } // функция
-
-
-
